@@ -47,8 +47,8 @@ class Datatiny:
         """Méthode qui permet de tester si le joueur est déjà dans la base de données.
         """
         User = Query()
-        search_player = (Datatiny.all_players.search((User.first_name == player.first_name)
-                         & (User.last_name == player.last_name)))
+        search_player = Datatiny.all_players.search(
+            (User.first_name == player.first_name) & (User.last_name == player.last_name))
         if bool(search_player) is True:
             print("******* Joueur déjà existant ! *******\n")
             return True
@@ -72,7 +72,8 @@ class Datatiny:
         doc_ids = len(Datatiny.all_players) + 1
         player.id = doc_ids
         serial_player = player.serialize_player()
-        search_player = Datatiny.all_players.search((User.first_name == player.first_name) & (User.last_name == player.last_name))
+        search_player = Datatiny.all_players.search(
+            (User.first_name == player.first_name) & (User.last_name == player.last_name))
         if bool(search_player) is False:
             Datatiny.all_players.insert(serial_player)
             print("******* Ajout du joueur dans la base *******\n")
@@ -83,7 +84,8 @@ class Datatiny:
         """Méthode pour chercher et changer le classement un joueur dans la base de données.
         """
         try:
-            search_player = Datatiny.all_players.search(Query().fragment({'first_name': player[0], 'last_name': player[1]}))
+            search_player = Datatiny.all_players.search(
+                Query().fragment({'first_name': player[0], 'last_name': player[1]}))
             if search_player == []:
                 print("\nPas de joueur trouvé\n")
             else:
@@ -91,7 +93,8 @@ class Datatiny:
                 player_id = int(input("Entrer l'id du joueur trouvé: "))
                 ranking = int(input("Entrer le nouveau classement du joueur: "))
                 Datatiny.all_players.update(set("ranking", ranking), doc_ids=[player_id])
-                new_player = Datatiny.all_players.search(Query().fragment({'first_name': player[0], 'last_name': player[1]}))
+                new_player = Datatiny.all_players.search(
+                    Query().fragment({'first_name': player[0], 'last_name': player[1]}))
                 print("\nNouveau classement : ", new_player, "\n")
         except NameError:
             print("Pas de joueur trouvé")
@@ -103,7 +106,8 @@ class Datatiny:
         Datatiny.players_tournement.truncate()
         User = Query()
         for player in list_players:
-            search_player = Datatiny.all_players.search((User.first_name == player.first_name) & (User.last_name == player.last_name))
+            search_player = Datatiny.all_players.search(
+                (User.first_name == player.first_name) & (User.last_name == player.last_name))
             if bool(search_player) is False:
                 doc_ids = len(Datatiny.all_players.all()) + 1
                 player.id = doc_ids

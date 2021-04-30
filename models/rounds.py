@@ -75,7 +75,8 @@ class Round:
 
     def switch(self, p):
         m = p - 1
-        while m > 0 and (self.list_match[p][0].id in self.list_match[m][0].tag_players) and (self.list_match[m][0].id not in self.list_match[m - 1][0].tag_players):
+        while m > 0 and (self.list_match[p][0].id in self.list_match[m][0].tag_players) and \
+                (self.list_match[m][0].id not in self.list_match[m - 1][0].tag_players):
             m -= 1
         p = m
         return p
