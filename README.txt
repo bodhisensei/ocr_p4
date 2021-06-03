@@ -16,3 +16,6 @@ pip install -r requirements.txt (à la racine du projet)
 
 Démarrage:
 -lancer le programme: python start_chess.py
+
+Rapport flake8:
+flake8 --format=html --htmldir=flake-report
