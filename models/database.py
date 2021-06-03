@@ -2,6 +2,7 @@ from tinydb import TinyDB, Query
 from tinydb.operations import set
 from models.players import Players
 from models.rounds import Round
+from views.menus import Menus
 
 
 class Datatiny:
@@ -15,9 +16,10 @@ class Datatiny:
     match_table = db.table('match_score')
     round_table = db.table('round')
     match_paired = db.table('match_paired')
+    ()
 
     def __init__(self):
-        pass
+        self.menu = Menus()
 
     def deserialize_player(self, dict_player):
         """Méthode pour déserialiser un dictionnaire Player en objet Player
@@ -62,7 +64,7 @@ class Datatiny:
         all_players = Datatiny.all_players
         serialized_player = all_players.get(doc_id=number)
         player = Datatiny.deserial_player(serialized_player)
-        print("Joueur importé")
+        print("Joueur importé \n")
         return player
 
     def insert_player(self, player):
@@ -76,9 +78,9 @@ class Datatiny:
             (User.first_name == player.first_name) & (User.last_name == player.last_name))
         if bool(search_player) is False:
             Datatiny.all_players.insert(serial_player)
-            print("******* Ajout du joueur dans la base *******\n")
+            self.menu.display("******* Ajout du joueur dans la base *******\n")
         else:
-            print("******* Joueur déjà existant ! *******\n")
+            self.menu.display("******* Joueur déjà existant ! *******\n")
 
     def change_ranking(self, player):
         """Méthode pour chercher et changer le classement un joueur dans la base de données.
@@ -87,17 +89,17 @@ class Datatiny:
             search_player = Datatiny.all_players.search(
                 Query().fragment({'first_name': player[0], 'last_name': player[1]}))
             if search_player == []:
-                print("\nPas de joueur trouvé\n")
+                self.menu.display("\nPas de joueur trouvé\n")
             else:
-                print("Joueur trouvé: ", search_player, "\n")
+                self.menu.display("Joueur trouvé: ", search_player, "\n")
                 player_id = int(input("Entrer l'id du joueur trouvé: "))
                 ranking = int(input("Entrer le nouveau classement du joueur: "))
                 Datatiny.all_players.update(set("ranking", ranking), doc_ids=[player_id])
                 new_player = Datatiny.all_players.search(
                     Query().fragment({'first_name': player[0], 'last_name': player[1]}))
-                print("\nNouveau classement : ", new_player, "\n")
+                self.menu.display("\nNouveau classement : ", new_player, "\n")
         except NameError:
-            print("Pas de joueur trouvé")
+            self.menu.display("Pas de joueur trouvé")
 
     def insert_data(self, list_players, tournament):
         """Méthode pour insérer les joueurs et les infos du tournoi dans la base de données.
@@ -176,7 +178,7 @@ class Datatiny:
         try:
             dic_players_score = dic_player_score[0]['player_scored']
         except IndexError:
-            print("Oups ! Pas de tournoi en cours...\n")
+            self.menu.display("Oups ! Pas de tournoi en cours...")
             return
         for dict_player in dic_players_score:
             list_player_score.append([self.deserialize_player(dict_player['player']), dict_player["player_score"]])
