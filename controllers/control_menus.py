@@ -7,6 +7,9 @@ from models.rounds import Round, Match
 from datetime import datetime
 from operator import itemgetter
 
+global player_imported
+player_imported = []
+
 
 class Control_players():
     """
@@ -29,28 +32,32 @@ class Control_players():
         de proposer le choix du joueur a importé.
         :return: un chiffre int
         """
-        print("------- Liste des joueurs dans la base -------")
+        self.menu.display("------- Numéros des joueurs déjà importés dans le tournoi : ")
+        for id in player_imported:
+            self.menu.display("Joueur numéro {}".format(id))
+
+        self.menu.display("------- Liste des joueurs dans la base -------")
         if len(self.data.all_players) == 0:
-            print("Pas de joueurs dans la base")
+            self.menu.display("Pas de joueurs dans la base")
             return None
         for player in self.data.all_players:
-            print("Joueur numéro {id}: {first_name} {last_name} - classement {ranking}.".format(**player))
+            self.menu.display("Joueur numéro {id}: {first_name} {last_name} - classement {ranking}.".format(**player))
         doc_ids = len(self.data.all_players) + 1
         while True:
             try:
                 number = int(input("------- Rentrer le numéro du joueur -------\n"))
                 if number not in list(range(doc_ids)):
-                    print("Mauvais numéro de joueur !")
+                    self.menu.display("Mauvais numéro de joueur !")
                 else:
+                    player_imported.append(number)
                     return number
             except ValueError:
-                print("Attention il faut un chiffre !")
+                self.menu.display("Attention il faut un chiffre !")
 
     def list_players(self):
         """Méthode de la classe Control_players pour créer ou importer les joueurs dans un tournoi.
         :return: une liste d'objet joueurs.
         """
-        # list_players = Players.auto_players()
         list_players = []
         for i in range(8):
             choice_create_player = self.menu.choice_create_player()
@@ -61,8 +68,12 @@ class Control_players():
                         list_players.append(infos_player)
                         break
             elif choice_create_player == 2:
-                choice_player = self.data.import_player(self.check_players())
-                list_players.append(choice_player)
+                player_choice = self.check_players()
+                player_choice = self.data.import_player(player_choice)
+                # player_choice = self.data.import_player(self.check_players())
+
+                list_players.append(player_choice)
+
         return list_players
 
 
@@ -83,7 +94,7 @@ class Control_tournament():
         list_create_tournement = self.menu.create_tournament()
         # tournament = Tournament("Master Chess 10000", "Rome", "24/04", "Quick", "Tournoi de Rome")
         tournament = Tournament(*list_create_tournement)
-        print(tournament, "\n")
+        self.menu.display(tournament)
         return tournament
 
     def round1(self, list_players):
@@ -121,7 +132,6 @@ class Control_tournament():
             if choice_round == 1:
                 self.menu.display_round(round.list_match_paired)
                 self.menu.ranking_list((self.match.results(match_paired)))
-                # self.menu.display(self.match.results(match_paired))
                 now = datetime.now()
                 round.end_date = str(now.strftime("%Y-%m-%d %H:%M:%S"))
                 list_rounds.append(round)
@@ -139,7 +149,7 @@ class Control_tournament():
         Permet le déroulement de chaque round jusqu à la fin du tournoi. Il est possible
         d'arreter le tournoi entre chaque round et d'afficher les rapports.
         """
-        print("------- Reprise du tournoi -------\n")
+        self.menu.display("------- Reprise du tournoi -------")
         list_datas = self.data.pull_data()
         try:
             list_rounds, list_player_score = list_datas

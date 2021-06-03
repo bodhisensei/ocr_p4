@@ -17,7 +17,7 @@ class Control_menu():
     def tournament_round(self, list_players):
         """Méthode de la classe Control_menu pour lancer le round 1 et le déroulement du tournoi.
         """
-        print("------- ROUND 1 -------\n")
+        self.menu.display("------- ROUND 1 -------")
         round1 = self.ct.round1(list_players)
         self.ct.more_round(round1)
 
