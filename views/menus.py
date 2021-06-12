@@ -18,7 +18,7 @@ class Menus():
         print("3: Reprendre le tournoi en cours")
         print("4: Changer le classement d'un joueur")
         print("5: Afficher un rapport")
-        print("6: Sauvegarder et Quitter\n")
+        print("6: Quitter le logiciel\n")
 
     @staticmethod
     def user_choice(message):
@@ -43,7 +43,7 @@ class Menus():
         :return: une liste.
         """
         first_name = Menus.check("1: Entrer le prénom du joueur\n")
-        last_name = Menus.check("1: Entrer le nom de famille du joueur\n")
+        last_name = Menus.check("1: Entrer le nom du joueur\n")
         return [first_name, last_name]
 
     @staticmethod
@@ -55,9 +55,27 @@ class Menus():
         """
         try:
             return str(input(message))
-        except Exception:
+        except TypeError:
             print("Oups info incorrect!")
             return Menus.check(message)
+
+    @staticmethod
+    def check_sex(message):
+        """Méthode de la classe Menus pour demander une saisie à l'utilisateur et vérifier le type str M ou F
+        :Args:
+            le texte du message.
+        :return: une str.
+        """
+        while True:
+            try:
+                sex = str(input(message))
+                if sex == "M" or sex == "F":
+                    return sex
+                else:
+                    print("Il faut une lettre M ou F !")
+            except ValueError:
+                print("Il faut une lettre M ou F !")
+                return Menus.check(message)
 
     @staticmethod
     def check_float(message):
@@ -94,6 +112,40 @@ class Menus():
                 print("Attention il faut un chiffre !")
 
     @staticmethod
+    def check_rank(message):
+        """Méthode de la classe Menus pour demander un chiffre à l'utilisateur et vérifier le type int.
+        :Args:
+            le texte du message.
+        :return: un chiffre int.
+        """
+        while True:
+            try:
+                number = int(input(message))
+                if number <= 1 or number <= 1000:
+                    return number
+                else:
+                    print("Attention il faut un chiffre entre 1 et 1000 !")
+            except ValueError:
+                print("Attention il faut un chiffre entre 1 et 1000 !")
+
+    @staticmethod
+    def check_id(message):
+        """Méthode de la classe Menus pour demander un chiffre à l'utilisateur et vérifier le type int.
+        :Args:
+            le texte du message.
+        :return: un chiffre int.
+        """
+        while True:
+            try:
+                number = int(input(message))
+                if number <= 1 or number <= 1000:
+                    return number
+                else:
+                    print("Attention il faut un chiffre !")
+            except ValueError:
+                print("Attention il faut un chiffre !")
+
+    @staticmethod
     def check_report(message):
         """Méthode de la classe Menus pour demander un chiffre à l'utilisateur et vérifier le type int.
         :Args:
@@ -111,6 +163,23 @@ class Menus():
                 print("Attention il faut un chiffre !")
 
     @staticmethod
+    def choice_round(message):
+        """Méthode de la classe Menus pour le menu entre chaque round du tournoi.
+        """
+        print("1: Continuer le tournoi")
+        print("2: Stopper le tournoi et retour au menu général")
+        print("3: Afficher le rapport du tournoi en cours\n")
+        while True:
+            try:
+                number = int(input(message))
+                if number < 1 or number > 3:
+                    print("Attention il faut un chiffre entre 1 et 3 !")
+                else:
+                    return number
+            except ValueError:
+                print("Attention il faut un chiffre !")
+
+    @staticmethod
     def create_player():
         """Méthode de la classe Menus pour demander une saisie à l'utilisateur et vérifier les types str ou int.
         :return: une liste.
@@ -118,9 +187,9 @@ class Menus():
         print("------- Création d'un joueur -------\n")
         first_name = Menus.check("1: Entrer le prenom du joueur\n")
         last_name = Menus.check("2: Entrer le nom du joueur\n")
-        date_of_birth = Menus.check("3: Entrer la date d'anniversaire du joueur au format JJ/MM/AA\n")
-        sex = Menus.check("4: Entrer le sexe du joueur M ou F\n")
-        ranking = int(Menus.check("5: Entrer le classement du joueur (un chiffre)\n"))
+        date_of_birth = Menus.check("3: Entrer la date de naissance du joueur au format JJ/MM/AA\n")
+        sex = Menus.check_sex("4: Entrer le sexe du joueur M ou F\n")
+        ranking = Menus.check_rank("5: Entrer le classement du joueur (un chiffre entre 1 et 1000)\n")
         return first_name, last_name, date_of_birth, sex, ranking
 
     @staticmethod
@@ -140,14 +209,6 @@ class Menus():
                     print("Attention il faut un chiffre 1 ou 2 !")
             except ValueError:
                 print("Attention il faut un chiffre !")
-
-    @staticmethod
-    def choice_round():
-        """Méthode de la classe Menus pour le menu entre chaque round du tournoi.
-        """
-        print("1: Continuer le tournoi")
-        print("2: Stopper le tournoi et retour au menu général")
-        print("3: Afficher le rapport du tournoi en cours\n")
 
     @staticmethod
     def create_tournament():
@@ -185,6 +246,17 @@ class Menus():
         """
         print()
         pprint(message)
+        print()
+
+    @staticmethod
+    def display_player(message):
+        """Méthode de la classe Menus pour afficher le rapport des joueurs.
+        :Args:
+            le texte du message.
+        """
+        print()
+        print("{first_name} {last_name} - classement {ranking} - Id N°{id}".format(**message))
+        print()
 
     @staticmethod
     def display_report_player(message):
@@ -192,6 +264,7 @@ class Menus():
         :Args:
             le texte du message.
         """
+        print()
         print("{first_name} {last_name} - classement {ranking} - Id N°{id}".format(**message))
         print()
 
@@ -201,6 +274,7 @@ class Menus():
         :Args:
             le texte du message.
         """
+        print()
         print("{name} - {start_date} - {end_date}".format(**message))
         print()
 
@@ -210,7 +284,8 @@ class Menus():
         :Args:
             le texte du message.
         """
-        print("Le tournoi {name} a {location} de type {time_control} le {date}".format(**message))
+        print()
+        print("Le tournoi {name} en {location} de type {time_control} le {date}".format(**message))
         print()
 
     @staticmethod
