@@ -78,28 +78,27 @@ class Datatiny:
             (User.first_name == player.first_name) & (User.last_name == player.last_name))
         if bool(search_player) is False:
             Datatiny.all_players.insert(serial_player)
-            self.menu.display("******* Ajout du joueur dans la base *******\n")
+            self.menu.display("******* Ajout du joueur dans la base de donnée fait *******")
         else:
-            self.menu.display("******* Joueur déjà existant ! *******\n")
+            self.menu.display("******* Joueur déjà existant ! *******")
 
     def change_ranking(self, player):
         """Méthode pour chercher et changer le classement un joueur dans la base de données.
         """
-        try:
-            search_player = Datatiny.all_players.search(
-                Query().fragment({'first_name': player[0], 'last_name': player[1]}))
-            if search_player == []:
-                self.menu.display("\nPas de joueur trouvé\n")
-            else:
-                self.menu.display("Joueur trouvé: ", search_player, "\n")
-                player_id = int(input("Entrer l'id du joueur trouvé: "))
-                ranking = int(input("Entrer le nouveau classement du joueur: "))
-                Datatiny.all_players.update(set("ranking", ranking), doc_ids=[player_id])
-                new_player = Datatiny.all_players.search(
-                    Query().fragment({'first_name': player[0], 'last_name': player[1]}))
-                self.menu.display("\nNouveau classement : ", new_player, "\n")
-        except NameError:
-            self.menu.display("Pas de joueur trouvé")
+        search_player = Datatiny.all_players.search(
+            Query().fragment({'first_name': player[0], 'last_name': player[1]}))
+        if search_player == []:
+            print("\nPas de joueur trouvé !\n")
+        else:
+            for player in search_player:
+                self.menu.display_player(player)
+                player_id = self.menu.check_id("Entrer l'id du joueur trouvé: ")
+                ranking = self.menu.check_rank("Entrer le nouveau classement du joueur: ")
+                try:
+                    Datatiny.all_players.update(set("ranking", ranking), doc_ids=[player_id])
+                    return True
+                except KeyError:
+                    print("\nMauvais id tapé !, pas de changement")
 
     def insert_data(self, list_players, tournament):
         """Méthode pour insérer les joueurs et les infos du tournoi dans la base de données.
