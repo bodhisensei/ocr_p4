@@ -3,6 +3,8 @@ from controllers.control_menus import Control_players
 from controllers.control_menus import Control_tournament
 from models.database import Datatiny
 
+from operator import itemgetter
+
 
 class Control_menu():
     """Une classe pour gérer le menu de base et le lancement d'un tournoi
@@ -40,7 +42,12 @@ class Control_menu():
                 self.ct.resume_tournament()
             if choice == 4:
                 player = self.menu.change_player()
-                self.data.change_ranking(player)
+                change = self.data.change_ranking(player)
+                if change is True:
+                    all_players = self.data.all_players
+                    list_players = sorted(all_players, key=itemgetter('ranking'), reverse=True)
+                    for player in list_players:
+                        self.menu.display_player(player)
             if choice == 5:
                 self.ct.data_report()
             if choice == 6:

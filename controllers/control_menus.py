@@ -70,10 +70,7 @@ class Control_players():
             elif choice_create_player == 2:
                 player_choice = self.check_players()
                 player_choice = self.data.import_player(player_choice)
-                # player_choice = self.data.import_player(self.check_players())
-
                 list_players.append(player_choice)
-
         return list_players
 
 
@@ -92,7 +89,6 @@ class Control_tournament():
         :return: un objet tournament de la classe Tournament.
         """
         list_create_tournement = self.menu.create_tournament()
-        # tournament = Tournament("Master Chess 10000", "Rome", "24/04", "Quick", "Tournoi de Rome")
         tournament = Tournament(*list_create_tournement)
         self.menu.display(tournament)
         return tournament
@@ -126,9 +122,8 @@ class Control_tournament():
             round = Round("Round " + str(i + 2), str(now.strftime("%Y-%m-%d %H:%M:%S")))
             round.list_match = self.match.list_scores_sorted
             match_paired = round.next_round()
-            self.menu.choice_round()
+            choice_round = self.menu.choice_round("Choisissez une action : --> ")
             self.data.insert_report(list_rounds)
-            choice_round = self.menu.check_int("Choisissez une action : --> ")
             if choice_round == 1:
                 self.menu.display_round(round.list_match_paired)
                 self.menu.ranking_list((self.match.results(match_paired)))
@@ -155,24 +150,33 @@ class Control_tournament():
             list_rounds, list_player_score = list_datas
         except TypeError:
             return
+        # nb_remain_round = self.ct.rounds - (len(list_rounds))
+        # self.menu.display("******* Il reste " + str(nb_remain_round) + " rounds *******")
+        # self.menu.ranking_list(list_player_score)
+        # # nb_next_round = self.ct.rounds - nb_remain_round
+        # for i in range(nb_remain_round):
+        #     self.menu.display("***** Round suivant *****")
+        #     now = datetime.now()
+        #     round = Round("Round next", str(now.strftime("%Y-%m-%d %H:%M:%S")))
         nb_remain_round = self.ct.rounds - (len(list_rounds))
         self.menu.display("******* Il reste " + str(nb_remain_round) + " rounds *******")
         self.menu.ranking_list(list_player_score)
         nb_next_round = self.ct.rounds - nb_remain_round
-        for i in range(1, nb_remain_round + 1):
-            print("\n------- ROUND ", (i + nb_next_round), "-------\n")
+        r = 0
+        for i in range(nb_remain_round):
+            r += 1
+            print("\n------- ROUND ", (nb_next_round + r), "-------\n")
             now = datetime.now()
-            round = Round("Round " + str(i + nb_next_round), now.strftime("%Y-%m-%d %H:%M:%S"))
+            round = Round("Round " + str(nb_next_round + r), str(now.strftime("%Y-%m-%d %H:%M:%S")))
             if i == 0:
                 round.list_match = list_player_score
             else:
                 round.list_match = self.match.list_scores_sorted
-            macth_paired = round.next_round()
-            self.menu.choice_round()
-            choice_round = self.menu.check_int("Choisissez une action : --> ")
+            match_paired = round.next_round()
+            choice_round = self.menu.choice_round("Choisissez une action : --> ")
             if choice_round == 1:
                 self.menu.display_round(round.list_match_paired)
-                self.menu.ranking_list(self.match.results(macth_paired))
+                self.menu.ranking_list(self.match.results(match_paired))
                 round.end_date = now.strftime("%Y-%m-%d %H:%M:%S")
                 list_rounds.append(round)
                 self.data.insert_report(list_rounds)
@@ -181,7 +185,7 @@ class Control_tournament():
                 break
             if choice_round == 3:
                 self.data.push_data(list_rounds, round)
-                self.menu.data_report()
+                self.data_report()
                 break
 
     def data_report(self):
